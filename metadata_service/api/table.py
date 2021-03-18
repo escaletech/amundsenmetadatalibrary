@@ -38,6 +38,17 @@ class TableDetailAPI(Resource):
         except NotFoundException:
             return {'message': 'table_uri {} does not exist'.format(table_uri)}, HTTPStatus.NOT_FOUND
 
+class TableColumnsDetail(Resource):
+    def __init__(self) -> None:
+        self.client = get_proxy_client()
+    
+    def get(self, table_uri: str) -> Iterable[Union[Mapping, int, None]]:
+        try:
+            columns = self.client.get_table_columns(table_uri=table_uri)
+            return {'columns': columns}, HTTPStatus.OK
+
+        except NotFoundException:
+            return {'message': 'table_uri {} does not exist'.format(table_uri)}, HTTPStatus.NOT_FOUND
 
 class TableLineageAPI(Resource):
     def __init__(self) -> None:

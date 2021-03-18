@@ -36,6 +36,10 @@ class BaseProxy(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def get_table_columns(self, *, table_uri: str) -> Table:
+        pass
+
+    @abstractmethod
     def delete_owner(self, *, table_uri: str, owner: str) -> None:
         pass
 

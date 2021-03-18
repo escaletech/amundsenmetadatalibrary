@@ -26,7 +26,7 @@ from metadata_service.api.system import Neo4jDetailAPI
 from metadata_service.api.table import (TableBadgeAPI, TableDashboardAPI,
                                         TableDescriptionAPI, TableDetailAPI,
                                         TableLineageAPI, TableOwnerAPI,
-                                        TableTagAPI)
+                                        TableTagAPI, TableColumnsDetail)
 from metadata_service.api.tag import TagAPI
 from metadata_service.api.user import (UserDetailAPI, UserFollowAPI,
                                        UserFollowsAPI, UserOwnAPI, UserOwnsAPI,
@@ -96,6 +96,7 @@ def create_app(*, config_module_class: str) -> Flask:
                      '/popular_tables/',
                      '/popular_tables/<path:user_id>')
     api.add_resource(TableDetailAPI, '/table/<path:table_uri>')
+    api.add_resource(TableColumnsDetail, '/table/<path:table_uri>/columns')
     api.add_resource(TableDescriptionAPI,
                      '/table/<path:id>/description')
     api.add_resource(TableTagAPI,

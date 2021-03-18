@@ -123,6 +123,50 @@ class Neo4jProxy(BaseProxy):
         return table
 
     @timer_with_counter
+    def get_table_columns(self, *, table_uri: str) -> List:
+        """
+        :param table_uri: Table URI
+        :return:  A Table object
+        """
+
+        usage_query = textwrap.dedent("""\
+        MATCH (db:Database)-[:CLUSTER]->(clstr:Cluster)-[:SCHEMA]->(schema:Schema)
+        -[:TABLE]->(tbl:Table {key: 'hive://gold.test_schema/test_table1'})-[:COLUMN]->(col:Column)
+        OPTIONAL MATCH (tbl)-[:DESCRIPTION]->(tbl_dscrpt:Description)
+        OPTIONAL MATCH (col:Column)-[:DESCRIPTION]->(col_dscrpt:Description)
+        OPTIONAL MATCH (col:Column)-[:HAS_BADGE]->(badge:Badge)
+        RETURN db, tbl, col, col_dscrpt,
+        collect(distinct badge) as col_badges
+        ORDER BY col.sort_order
+        """)
+
+        usage_neo4j_records = self._execute_cypher_query(statement=usage_query,
+                                                         param_dict={'tbl_key': table_uri})
+
+        cols = []
+        for tbl_col_neo4j_record in usage_neo4j_records:
+            column_badges = []
+            for badge in tbl_col_neo4j_record['col_badges']:
+                column_badges.append({
+                    'badge_name': badge['key'],
+                    'category': badge['category']
+                })
+
+            col = {
+                'name': tbl_col_neo4j_record['col']['name'],
+                'description': self._safe_get(tbl_col_neo4j_record, 'col_dscrpt', 'description'),
+                'col_type': tbl_col_neo4j_record['col']['col_type'],
+                'badges': column_badges
+            }
+
+            cols.append(col)
+
+        if not cols:
+            raise NotFoundException('Table URI( {table_uri} ) does not exist'.format(table_uri=table_uri))
+
+        return cols
+
+    @timer_with_counter
     def _exec_col_query(self, table_uri: str) -> Tuple:
         # Return Value: (Columns, Last Processed Record)
 
