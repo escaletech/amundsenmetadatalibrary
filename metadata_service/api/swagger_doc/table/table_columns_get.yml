@@ -1,0 +1,46 @@
+Gets table descriptions
+---
+tags:
+  - 'table'
+parameters:
+  - name: table_uri
+    in: path
+    type: string
+    schema:
+      type: string
+    required: true
+    example: 'dynamo://gold.test_schema/test_table2'
+responses:
+  200:
+    description: 'Table columns'
+    content:
+      application/json:
+        schema:
+          id: rec_response
+          properties:
+            name:
+              type: string
+              example: col5
+            description:
+              type: string
+              example: col5 description
+            col_type:
+              type: string
+              example: string
+            badges:
+              type: array
+              items:
+                type: object
+                properties:
+                  badge_name:
+                    type: string
+                    example: pii
+                  category:
+                    type: string
+                    example: column
+  404:
+    description: 'Table not found'
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ErrorResponse'

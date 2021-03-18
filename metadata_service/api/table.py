@@ -42,6 +42,7 @@ class TableColumnsDetail(Resource):
     def __init__(self) -> None:
         self.client = get_proxy_client()
     
+    @swag_from('swagger_doc/table/table_columns_get.yml')
     def get(self, table_uri: str) -> Iterable[Union[Mapping, int, None]]:
         try:
             columns = self.client.get_table_columns(table_uri=table_uri)

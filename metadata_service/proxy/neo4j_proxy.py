@@ -126,7 +126,7 @@ class Neo4jProxy(BaseProxy):
     def get_table_columns(self, *, table_uri: str) -> List:
         """
         :param table_uri: Table URI
-        :return:  A Table object
+        :return: A list of columns as map
         """
 
         usage_query = textwrap.dedent("""\
