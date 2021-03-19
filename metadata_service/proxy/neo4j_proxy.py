@@ -131,7 +131,7 @@ class Neo4jProxy(BaseProxy):
 
         usage_query = textwrap.dedent("""\
         MATCH (db:Database)-[:CLUSTER]->(clstr:Cluster)-[:SCHEMA]->(schema:Schema)
-        -[:TABLE]->(tbl:Table {key: 'hive://gold.test_schema/test_table1'})-[:COLUMN]->(col:Column)
+        -[:TABLE]->(tbl:Table {key: $tbl_key})-[:COLUMN]->(col:Column)
         OPTIONAL MATCH (tbl)-[:DESCRIPTION]->(tbl_dscrpt:Description)
         OPTIONAL MATCH (col:Column)-[:DESCRIPTION]->(col_dscrpt:Description)
         OPTIONAL MATCH (col:Column)-[:HAS_BADGE]->(badge:Badge)
