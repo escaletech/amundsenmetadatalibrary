@@ -13,12 +13,14 @@ from flask_restful import Resource, reqparse
 from metadata_service.entity.resource_type import ResourceType
 from metadata_service.exception import NotFoundException
 from metadata_service.proxy import get_proxy_client
+from metadata_service.api.badge import BadgeCommon
 
 
 class ColumnLineageAPI(Resource):
     """
     ColumnLineageAPI supports GET operation to get column lineage
     """
+
     def __init__(self) -> None:
         self.client = get_proxy_client()
         self.parser = reqparse.RequestParser()
@@ -89,3 +91,19 @@ class ColumnDescriptionAPI(Resource):
 
         except Exception:
             return {'message': 'Internal server error!'}, HTTPStatus.INTERNAL_SERVER_ERROR
+
+
+class ColumnBadgeAPI(Resource):
+    def __init__(self) -> None:
+        self.client = get_proxy_client()
+        super(ColumnBadgeAPI, self).__init__()
+        self._badge_common = BadgeCommon(client=self.client)
+
+    @swag_from('swagger_doc/column/badge.yml')
+    def put(self, table_uri: str, column_name: str) -> Iterable[Union[Mapping, int, None]]:
+        body = json.loads(request.data)
+        badge_name, category = [body[k] for k in body]
+        return self._badge_common.put(id=f"{table_uri}/{column_name}",
+                                      resource_type=ResourceType.Column,
+                                      badge_name=badge_name,
+                                      category=category)
