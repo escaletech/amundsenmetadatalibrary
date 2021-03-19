@@ -1,0 +1,46 @@
+Add badge to a column
+---
+tags:
+  - 'column'
+parameters:
+  - name: table_uri
+    in: path
+    type: string
+    schema:
+      type: string
+    required: true
+    example: 'hive://gold.test_schema/test_table1'
+  - name: column_name
+    in: path
+    type: string
+    schema:
+      type: string
+    required: true
+    example: 'col1'
+  - name: badge
+    in: query
+    type: string
+    schema:
+      type: string
+    required: true
+    example: PII
+  - name: category
+    in: query
+    type: string
+    schema:
+      type: string
+    required: true
+    example: column
+responses:
+  200:
+    description: 'The badge was deleted successfully'
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/MessageResponse'
+  404:
+    description: 'An exception ocurred'
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ErrorResponse'

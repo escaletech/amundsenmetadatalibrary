@@ -1,0 +1,38 @@
+Add badge to a column
+---
+tags:
+  - 'column'
+parameters:
+  - name: table_uri
+    in: path
+    type: string
+    schema:
+      type: string
+    required: true
+    example: 'hive://gold.test_schema/test_table1'
+  - name: column_name
+    in: path
+    type: string
+    schema:
+      type: string
+    required: true
+    example: 'col1'
+requestBody:
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/Badge'
+        required: true
+responses:
+  200:
+    description: 'The badge was added successfully'
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/MessageResponse'
+  404:
+    description: 'Column not found, or badge is not whitelisted'
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ErrorResponse'
